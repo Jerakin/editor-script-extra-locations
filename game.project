@@ -1,0 +1,9 @@
+[project]
+title = editor-script-extra-locations
+
+[library]
+include_dirs = editor-script-extra-locations
+
+[bootstrap]
+main_collection = /main/main.collectionc
+

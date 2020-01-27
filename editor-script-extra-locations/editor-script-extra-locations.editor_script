@@ -1,0 +1,81 @@
+local inifile = require "editor-script-extra-locations.inifile"
+
+local M = {}
+
+local windows = "x86_64-win32"
+local macOS = "x86_64-darwin"
+
+local sys_platform = editor.platform
+local project_title = nil
+
+local paths = {
+    ["http-cache"] = {
+        [macOS] = "Defold/http-cache/",
+        [windows] = "%APP_DATA%/Roaming/Defold/http-cache/"
+    }
+}
+
+local function open(type)
+    paths.save = {
+        [macOS] = project_title,
+        [windows] = "%APP_DATA%/Roaming/".. project_title
+    }
+
+    local path = paths[type][sys_platform]
+    if sys_platform == macOS then
+        return {"./editor-script-open/open.sh", path}
+    elseif sys_platform == windows then
+        return {"start", path}
+    end
+end
+
+local function remove(type)
+    paths.save = {
+        [macOS] = project_title,
+        [windows] = "%APP_DATA%/Roaming/".. project_title
+    }
+
+    local path = paths[type][sys_platform]
+    if sys_platform == macOS then
+    elseif sys_platform == windows then
+    end
+end
+
+function M.get_commands()
+    return {
+        {
+            label = "Open http cache",
+            locations = {"View"},
+            query = {
+                selection = {type = "resource", cardinality = "one"}
+            },
+            run = function(opts)
+                project_title = inifile.parse("./game.project").project.title
+                return {
+                    {
+                        action = "shell",
+                        command = open("http-cache")
+                    }
+                }
+            end
+        },
+        {
+            label = "Open game storage",
+            locations = {"View"},
+            query = {
+                selection = {type = "resource", cardinality = "one"}
+            },
+            run = function(opts)
+                project_title = inifile.parse("./game.project").project.title
+                return {
+                    {
+                        action = "shell",
+                        command = open("save")
+                    }
+                }
+            end
+        }
+    }
+end
+
+return M
