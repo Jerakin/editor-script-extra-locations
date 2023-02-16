@@ -1,1 +1,0 @@
-open ~/Library/Application\ Support/$1
