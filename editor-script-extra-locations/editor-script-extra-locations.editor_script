@@ -33,7 +33,7 @@ end
 function M.get_commands()
     return {
         {
-            label = "Open http cache",
+            label = "Open Http Cache Location",
             locations = {"View"},
             query = {
                 selection = {type = "resource", cardinality = "one"}
@@ -48,7 +48,7 @@ function M.get_commands()
             end
         },
         {
-            label = "Open game storage",
+            label = "Open Project Storage Location",
             locations = {"View"},
             query = {
                 selection = {type = "resource", cardinality = "one"}
