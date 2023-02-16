@@ -13,18 +13,18 @@ end
 
 local paths = {
     ["http-cache"] = {
-        [macOS] = '~/Library/Application*/Defold/http-cache',
+        [macOS] = 'Defold/http-cache',
         [windows] = "%APP_DATA%/Roaming/Defold/http-cache/"
     },
     ["storage"] = {
-        [macOS] = "~/Library/Application\ Support/" .. project_title,
+        [macOS] = project_title,
         [windows] = "%APP_DATA%/Roaming/".. project_title
     }
 }
 
 local function open()
     if sys_platform == macOS then
-        return "/build/plugins/editor-script-extra-locations/plugins/bin/".. sys_platform .. "/open.sh"
+        return "./build/plugins/editor-script-extra-locations/plugins/bin/".. sys_platform .. "/open.sh"
     elseif sys_platform == windows then
         return "start"
     end
