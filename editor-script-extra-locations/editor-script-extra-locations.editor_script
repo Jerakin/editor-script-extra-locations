@@ -1,68 +1,60 @@
 local inifile = require "editor-script-extra-locations.inifile"
+local exists, extra_location = pcall(require,"extra-locations")
 
 local M = {}
 
-local windows = "x86_64-win32"
 local macOS = "x86_64-macos"
+local windows = "x86_64-win32"
+local linux = "x86_64-linux"
 
 local sys_platform = editor.platform
-local project_title = nil
-if not project_title then
-    project_title = inifile.parse("./game.project").project.title
-end
+
 
 local paths = {
-    ["http-cache"] = {
-        [macOS] = 'Defold/http-cache',
-        [windows] = "%APP_DATA%/Roaming/Defold/http-cache/"
-    },
-    ["storage"] = {
-        [macOS] = project_title,
-        [windows] = "%APP_DATA%/Roaming/".. project_title
+    ["Http Cache Location"] = {
+        [macOS] = '~/Library/Application Support/Defold/http-cache',
+        [windows] = "%appdata%/Defold/http-cache/"
     }
 }
 
-local function open()
-    if sys_platform == macOS then
-        return "./build/plugins/editor-script-extra-locations/plugins/bin/".. sys_platform .. "/open.sh"
-    elseif sys_platform == windows then
-        return "start"
+if exists then
+    for key, value in pairs(extra_location) do
+        paths[key] = value
     end
 end
 
-function M.get_commands()
-    return {
-        {
-            label = "Open Http Cache Location",
-            locations = {"View"},
-            query = {
-                selection = {type = "resource", cardinality = "one"}
-            },
-            run = function(opts)
-                return {
-                    {
-                        action = "shell",
-                        command = {open(), paths["http-cache"][sys_platform]}
-                    }
-                }
-            end
-        },
-        {
-            label = "Open Project Storage Location",
-            locations = {"View"},
-            query = {
-                selection = {type = "resource", cardinality = "one"}
-            },
-            run = function(opts)
-                return {
-                    {
-                        action = "shell",
-                        command = {open(), paths["storage"][sys_platform]}
-                    }
-                }
-            end
-        }
+
+local function open()
+    local bin = "./build/plugins/editor-script-extra-locations/plugins/bin/"
+    local t = {
+        [macOS] = bin .. "x86_64-macos/open.sh",
+        [windows] = bin .. "x86_64-win32/open.bat",
+        [linux] = bin .. "x86_64-linux/open.bat",
     }
+    return t[sys_platform]
+end
+
+local function generate_commands()
+    local commands = {}
+    for name, _ in pairs(paths) do
+        table.insert(commands, {
+            label = "Open ".. name,
+            locations = {"View"},
+            run = function(opts)
+                return {
+                    {
+                        action = "shell",
+                        command = {open(), paths[name][sys_platform]}
+                    }
+                }
+            end
+        })
+    end
+    return commands
+end
+
+function M.get_commands()
+    return generate_commands()
 end
 
 return M

@@ -9,3 +9,21 @@ https://github.com/Jerakin/editor-script-extra-locations/archive/master.zip
 
 ## Editor Script
 This script adds a few menu option to the view menu to open the finder/explorer at different important locations.
+
+## User defined locations
+You can create a `extra-locations.lua` in the root of your project with a table of custom locations that you want to be able to open.
+
+```lua
+
+local windows = "x86_64-win32"
+local macOS = "x86_64-macos"
+
+return {
+	["Save Location"] = {
+		[macOS] = "~/Library/Application Support/savefile_location",
+		[windows] = "%appdata%/savefile_location"
+	}
+}
+
+```
+
